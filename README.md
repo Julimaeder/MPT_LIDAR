@@ -13,7 +13,8 @@ Feel free to open a pull request or an issue if you have any suggestions for imp
 ## Installation and run
 
 please note that a LIDAR scan is required as a ".ply" file and must be placed in the "ply_scan" folder.
-A sample scan is available under the download link: https://drive.google.com/file/d/1L25GpNh-8fGvyawtEdPPwsrVR8pkgTfv/view?usp=sharing 
+A sample scan is available under the download link:  
+https://drive.google.com/file/d/1L25GpNh-8fGvyawtEdPPwsrVR8pkgTfv/view?usp=sharing 
 
 Download and install:   
 ```
