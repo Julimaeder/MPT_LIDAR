@@ -22,15 +22,11 @@ def edit_data(model):
     # Surface reconstruction
     print("reconstructing surface")
     poisson_mesh, densities = o3d.geometry.TriangleMesh.create_from_point_cloud_poisson(inlier_cloud, depth=9)
-    # Create a wireframe representation of the mesh and color the wireframe
-    print("creating wireframe")
-    wireframe = o3d.geometry.LineSet.create_from_triangle_mesh(poisson_mesh)
-    wireframe.paint_uniform_color([1, 0.41, 0.71])  # RGB-color value for pink
     
-    return poisson_mesh, wireframe
+    return poisson_mesh
 
-async def show_model(poisson_mesh, wireframe):
-    # Visualize the reconstructed mesh and its wireframe
+async def show_model(poisson_mesh):
+    # Visualize the reconstructed mesh
     print("visualizing...")
     monitors = sc.get_monitors()
     screenheight = int(re.findall("(?<=height=)[0-9]+(?=,)", str(monitors[0]))[0])
@@ -56,9 +52,9 @@ async def main():
         model = load_data()
     else:
         model = load_data(path)
-    poisson_mesh, wireframe = edit_data(model)
+    poisson_mesh = edit_data(model)
     # run show_model() and save_data_gltf() concurrently
-    await asyncio.gather(show_model(poisson_mesh, wireframe),
+    await asyncio.gather(show_model(poisson_mesh),
                          save_data_gltf(poisson_mesh))
 
 if __name__ == '__main__':
