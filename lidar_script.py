@@ -1,6 +1,8 @@
 import open3d as o3d
 import asyncio
 import os
+import screeninfo as sc
+import re
 
 
 def load_data(path="ply_scan/Scan_20_24_51.ply"):
@@ -30,8 +32,12 @@ def edit_data(model):
 async def show_model(poisson_mesh, wireframe):
     # Visualize the reconstructed mesh and its wireframe
     print("visualizing...")
+    monitors = sc.get_monitors()
+    screenheight = int(re.findall("(?<=height=)[0-9]+(?=,)", str(monitors[0]))[0])
+    screenwidth = int(re.findall("(?<=width=)[0-9]+(?=,)", str(monitors[0]))[0])
     await asyncio.sleep(0) # bug in asyncio that blocks the loop unless asyncio.sleep() is used
-    o3d.visualization.draw_geometries([poisson_mesh, wireframe])
+    o3d.visualization.draw_geometries([poisson_mesh], width=screenwidth, height=screenheight,
+                                      left=0, top=0, mesh_show_wireframe=True)
 
 async def save_data_gltf(poisson_mesh, save_path="gltf_3d_mesh/reconstructed_mesh.gltf"):
     # Save the reconstructed mesh as a glTF file
