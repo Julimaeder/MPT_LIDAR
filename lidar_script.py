@@ -31,7 +31,7 @@ async def show_model(poisson_mesh, wireframe):
     # Visualize the reconstructed mesh and its wireframe
     print("visualizing...")
     await asyncio.sleep(0) # bug in asyncio that blocks the loop unless asyncio.sleep() is used
-    o3d.visualization.draw_geometries([poisson_mesh, wireframe])
+    o3d.visualization.draw_geometries([poisson_mesh], mesh_show_wireframe=True)
 
 async def save_data_gltf(poisson_mesh, save_path="gltf_3d_mesh/reconstructed_mesh.gltf"):
     # Save the reconstructed mesh as a glTF file
@@ -43,8 +43,8 @@ async def save_data_gltf(poisson_mesh, save_path="gltf_3d_mesh/reconstructed_mes
     print(f"your glTF file has been saved to '/{save_path}'")
 
 async def main():
-    path = False
-    while not path: # prevent user from keeping empty
+    path = "a"
+    while (len(path) < 4) ^ (path == "n"): # prevent user from keeping empty and giving impossible path
         path = input("path to your ply-data (n for default): ")
     if path == "n":
         model = load_data()
