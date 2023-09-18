@@ -5,7 +5,7 @@ import screeninfo as sc
 import re
 
 
-def load_data(path="ply_scan/Scan_20_24_51.ply"):
+def load_data(path):
     # Load the LIDAR point cloud
     print("loading LIDAR point cloud")
     return o3d.io.read_point_cloud(path) 
@@ -25,15 +25,26 @@ def edit_data(model):
     
     return poisson_mesh
 
-async def show_model(poisson_mesh):
+async def show_model(poisson_mesh, window_name):
     # Visualize the reconstructed mesh
     print("visualizing...")
     monitors = sc.get_monitors()
     screenheight = int(re.findall("(?<=height=)[0-9]+(?=,)", str(monitors[0]))[0])
     screenwidth = int(re.findall("(?<=width=)[0-9]+(?=,)", str(monitors[0]))[0])
     await asyncio.sleep(0) # bug in asyncio that blocks the loop unless asyncio.sleep() is used
-    o3d.visualization.draw_geometries([poisson_mesh], width=screenwidth, height=screenheight,
-                                      left=0, top=0, mesh_show_wireframe=True)
+    o3d.visualization.draw_geometries([poisson_mesh], window_name=str(window_name[0]), width=screenwidth,
+                                      height=screenheight, left=0, top=0, mesh_show_wireframe=True,
+                                      mesh_show_back_face=True)
+    """
+    controlls in renderer
+    W to show/hide wireframe on mesh
+    R to reset camera
+    Q, Esc to exit renderer
+    H for help message (in console)
+    left mouse to rotate
+    middle mouse / strg + left mouse for height + side movement
+    shift + left mouse to roll
+    """
 
 async def save_data_gltf(poisson_mesh, save_path="gltf_3d_mesh/reconstructed_mesh.gltf"):
     # Save the reconstructed mesh as a glTF file
@@ -46,16 +57,23 @@ async def save_data_gltf(poisson_mesh, save_path="gltf_3d_mesh/reconstructed_mes
 
 async def main():
     path = "a"
-    while (len(path) < 4) ^ (path == "n"): # prevent user from keeping empty and giving impossible path
+    while (len(path) < 5) ^ (path == "n"): # prevent user from keeping empty and giving impossible path
         path = input("path to your ply-data (n for default): ")
     if path == "n":
-        model = load_data()
+        model = load_data("ply_scan/Scan_20_24_51.ply")
+        window_name = re.findall("(?<=/).+(?=\.ply)", "ply_scan/Scan_20_24_51.ply")
     else:
         model = load_data(path)
+        if "/" in path:
+            window_name = re.findall("(?<=/).+(?=\.ply)", path)
+        else:
+            window_name = re.findall(".+(?=\.ply)", path)
+
     poisson_mesh = edit_data(model)
     # run show_model() and save_data_gltf() concurrently
-    await asyncio.gather(show_model(poisson_mesh),
+    await asyncio.gather(show_model(poisson_mesh, window_name),
                          save_data_gltf(poisson_mesh))
+
 
 if __name__ == '__main__':
     asyncio.run(main())
