@@ -1,5 +1,6 @@
 import open3d as o3d
 import asyncio
+import os
 
 
 def load_data(path="ply_scan/Scan_20_24_51.ply"):
@@ -29,22 +30,28 @@ def edit_data(model):
 async def show_model(poisson_mesh, wireframe):
     # Visualize the reconstructed mesh and its wireframe
     print("visualizing...")
-    await asyncio.sleep(0)
+    await asyncio.sleep(0) # bug in asyncio that blocks the loop unless asyncio.sleep() is used
     o3d.visualization.draw_geometries([poisson_mesh, wireframe])
 
 async def save_data_gltf(poisson_mesh, save_path="gltf_3d_mesh/reconstructed_mesh.gltf"):
     # Save the reconstructed mesh as a glTF file
     print("Save file as Graphics Library Transmission Format (.glTF)")
+    # create empty directory to save file in if not existing
+    if os.path.exists("gltf_3d_mesh"==False):
+        os.makedirs("gltf_3d_mesh")
     o3d.io.write_triangle_mesh("gltf_3d_mesh/reconstructed_mesh.gltf", poisson_mesh)
     print(f"your glTF file has been saved to '/{save_path}'")
 
 async def main():
-    path = input("path to your ply-data (n for default): ")
+    path = False
+    while not path: # prevent user from keeping empty
+        path = input("path to your ply-data (n for default): ")
     if path == "n":
         model = load_data()
     else:
         model = load_data(path)
     poisson_mesh, wireframe = edit_data(model)
+    # run show_model() and save_data_gltf() concurrently
     await asyncio.gather(show_model(poisson_mesh, wireframe),
                          save_data_gltf(poisson_mesh))
 
