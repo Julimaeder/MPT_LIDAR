@@ -13,6 +13,17 @@ The mesh is then displayed in a window where it is possible to take a closer loo
 In the view mode you can move around in the 3D space and switch the wireframe on and off as needed. 
 After finishing the view mode a copy of the 3d model is saved in the folder "gltf_3d_mesh" as a .glTF file for further processing in the VR Meta Quest.
 
+#### controlls in renderer:
+```
+    W to show/hide wireframe on mesh
+    R to reset camera
+    Q, Esc to exit renderer
+    H for help message (in console)
+    left mouse to rotate
+    middle mouse / strg + left mouse for height + side movement
+    shift + left mouse to roll
+```
+
 ## Contribution
 Feel free to open a pull request or an issue if you have any suggestions for improvements.
 
