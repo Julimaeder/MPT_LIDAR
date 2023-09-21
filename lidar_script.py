@@ -25,6 +25,39 @@ def edit_data(model):
     
     return poisson_mesh
 
+def ply_path_selection():
+    while True:
+        path = "a"
+        while (len(path) < 5) ^ (path == "n"): # prevent user from keeping empty and giving impossible path
+            path = input("path to your ply-data (n for default): ")      
+        if path == "n":
+            model = load_data("ply_scan/Scan_20_24_51.ply")
+            window_name = re.findall("(?<=/).+(?=\.ply)", "ply_scan/Scan_20_24_51.ply")
+            break      
+        else:
+            if os.path.isdir(path):  # Checks if it is a folder
+                # Searches folders for files with ".ply" extension
+                ply_files = [f for f in os.listdir(path) if f.endswith(".ply")]   
+                if len(ply_files) > 0:  # Checks if at least one .ply file was found
+                    # Takes the first found .ply file
+                    ply_file = os.path.join(path, ply_files[0])
+                    model = load_data(ply_file)
+                    window_name = re.findall("(?<=/).+(?=\.ply)", ply_file)
+                    break
+                else:
+                    print("No .ply files found in the specified folder.")  
+            elif path.endswith(".ply"):
+                model = load_data(path)
+                if "/" in path:
+                    window_name = re.findall("(?<=/).+(?=\.ply)", path)
+                else:
+                    window_name = re.findall(".+(?=\.ply)", path)
+                break         
+            else:
+                print("The given path does not exist")
+    
+    return model, window_name
+
 async def show_model(poisson_mesh, window_name):
     # Visualize the reconstructed mesh
     print("visualizing...")
@@ -56,19 +89,7 @@ async def save_data_gltf(poisson_mesh, save_path="gltf_3d_mesh/reconstructed_mes
     print(f"your glTF file has been saved to '/{save_path}'")
 
 async def main():
-    path = "a"
-    while (len(path) < 5) ^ (path == "n"): # prevent user from keeping empty and giving impossible path
-        path = input("path to your ply-data (n for default): ")
-    if path == "n":
-        model = load_data("ply_scan/Scan_20_24_51.ply")
-        window_name = re.findall("(?<=/).+(?=\.ply)", "ply_scan/Scan_20_24_51.ply")
-    else:
-        model = load_data(path)
-        if "/" in path:
-            window_name = re.findall("(?<=/).+(?=\.ply)", path)
-        else:
-            window_name = re.findall(".+(?=\.ply)", path)
-
+    model, window_name = ply_path_selection()
     poisson_mesh = edit_data(model)
     # run show_model() and save_data_gltf() concurrently
     await asyncio.gather(show_model(poisson_mesh, window_name),
