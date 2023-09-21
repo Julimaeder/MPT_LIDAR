@@ -5,7 +5,13 @@
 
 Hello we are students from Dusseldorf University of Applied Sciences and this is our 4th semester project in the field of MPT (Machine Perception and Tracking).
 
-MPT LIDAR python project to process a point cloud mesh and implement it as a VR Meta Quest environment.
+The MPT LIDAR Python project deals with the processing of a point cloud mesh and its implementation in a VR Meta Quest environment.
+
+## Description
+The lidar_script.py allows to load a LIDAR point cloud scan and convert it into a 3D mesh. 
+The mesh is then displayed in a window where it is possible to take a closer look at the 3D model. 
+In the view mode you can move around in the 3D space and switch the wireframe on and off as needed. 
+After finishing the view mode a copy of the 3d model is saved in the folder "gltf_3d_mesh" as a .glTF file for further processing in the VR Meta Quest.
 
 ## Contribution
 Feel free to open a pull request or an issue if you have any suggestions for improvements.
