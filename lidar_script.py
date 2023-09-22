@@ -26,36 +26,24 @@ def edit_data(model):
     return poisson_mesh
 
 def ply_path_selection():
-    while True:
-        path = "a"
-        while (len(path) < 5) ^ (path == "n"): # prevent user from keeping empty and giving impossible path
-            path = input("path to your ply-data (n for default): ")      
+    model = None
+    while model == None:
+        path = input("path to your ply-data (n for default): ")   
         if path == "n":
             model = load_data("ply_scan/Scan_20_24_51.ply")
-            window_name = re.findall("(?<=/).+(?=\.ply)", "ply_scan/Scan_20_24_51.ply")
-            break      
+            window_name = os.path.basename("ply_scan/Scan_20_24_51.ply")[:-4]  
         else:
-            if os.path.isdir(path):  # Checks if it is a folder
-                # Searches folders for files with ".ply" extension
-                ply_files = [f for f in os.listdir(path) if f.endswith(".ply")]   
-                if len(ply_files) > 0:  # Checks if at least one .ply file was found
-                    # Takes the first found .ply file
-                    ply_file = os.path.join(path, ply_files[0])
-                    model = load_data(ply_file)
-                    window_name = re.findall("(?<=/).+(?=\.ply)", ply_file)
-                    break
-                else:
-                    print("No .ply files found in the specified folder.")  
-            elif path.endswith(".ply"):
+            if os.path.isfile(path):
                 model = load_data(path)
-                if "/" in path:
-                    window_name = re.findall("(?<=/).+(?=\.ply)", path)
-                else:
-                    window_name = re.findall(".+(?=\.ply)", path)
-                break         
-            else:
-                print("The given path does not exist")
-    
+                window_name = os.path.basename(path)[:-4]
+            elif os.path.exists(os.path.dirname(path)):
+                basepath = os.path.dirname(path)
+                for filename in os.listdir(basepath):
+                    if filename.endswith('.ply'):
+                        model = load_data(os.path.join(basepath,filename))
+                        window_name = filename[:-4]
+                        break
+        if model == None: print("No .ply files were found. Please check spelling and special characters and try again")
     return model, window_name
 
 async def show_model(poisson_mesh, window_name):
