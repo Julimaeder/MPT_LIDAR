@@ -4,6 +4,7 @@ import os
 import screeninfo as sc
 import re
 import numpy as np
+from PIL import Image
 
 
 def load_data(path):
@@ -93,13 +94,14 @@ async def save_data_gltf(poisson_mesh, save_path="gltf_3d_mesh/reconstructed_mes
 async def save_textures(textures, save_path="gltf_3d_mesh/textures.png"):
     # Save the textures as image texture map (.png)
     print("Save textures as texture map (.png)")
-    texture_map = o3d.geometry.Image(textures.shape[0], textures.shape[1], o3d.geometry.ImageFormat.RGB)
-    print("1")
-    np.copyto(texture_map.data, textures)
-    print("2")
-    o3d.io.write_image(save_path, texture_map)
-    #im = Image.fromarray(textures, "RGB")
-    #im.save(save_path)
+    #texture_map = o3d.geometry.Image(textures.shape[0], textures.shape[1], o3d.geometry.ImageFormat.UInt8Color)
+    #print("1")
+    #np.copyto(texture_map.data, textures)
+    #print("2")
+    #o3d.io.write_image(save_path, texture_map)
+    im = Image.fromarray(textures, "RGB")
+    im.save(save_path)
+    
     print(f"your texture map has been saved to '/{save_path}")
 
 async def main():
