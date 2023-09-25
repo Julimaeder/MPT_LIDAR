@@ -91,16 +91,45 @@ async def save_data_gltf(poisson_mesh, save_path="gltf_3d_mesh/reconstructed_mes
     o3d.io.write_triangle_mesh(save_path, poisson_mesh)
     print(f"your glTF file has been saved to '/{save_path}'")
 
-async def save_textures(textures, save_path="gltf_3d_mesh/textures.png"):
+async def save_textures(textures, save_path="image.png"):
     # Save the textures as image texture map (.png)
     print("Save textures as texture map (.png)")
+    
+    """
+    still doesnt work, because the png file is somehow corrupted (empty)
+    """
+    
+    # --- old attempt ---
+    
     #texture_map = o3d.geometry.Image(textures.shape[0], textures.shape[1], o3d.geometry.ImageFormat.UInt8Color)
     #print("1")
     #np.copyto(texture_map.data, textures)
     #print("2")
     #o3d.io.write_image(save_path, texture_map)
+    
+    # --- /old attempt
+    
+    # --- Debug ---
+    
+    print("Textures shape:", textures.shape)
+    print("Textures data type:", textures.dtype)
+    print("Textures min value:", np.min(textures))
+    print("Textures max value:", np.max(textures))
+    print(textures)
+    
+    # --- /debug
+    
+    # --- new code ---
+    
+    textures = (textures * 255).astype(np.uint8)
+    if textures.ndim == 2:
+        textures = np.stack([textures] * 3, axis=-1)
+    if textures.shape[-1] == 1:
+        textures = np.repeat(textures, 3, axis=-1)
     im = Image.fromarray(textures, "RGB")
     im.save(save_path)
+    
+    # --- /new code ---
     
     print(f"your texture map has been saved to '/{save_path}")
 
