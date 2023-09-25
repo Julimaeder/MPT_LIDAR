@@ -8,6 +8,9 @@
 *.ply
 *.stl
 *.gltf
+ply_scan/
+gltf_3d_mesh/
+obj_3d_mesh/
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
