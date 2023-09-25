@@ -8,6 +8,7 @@
 *.ply
 *.stl
 *.gltf
+ply_scan/
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

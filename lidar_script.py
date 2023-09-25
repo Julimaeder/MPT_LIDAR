@@ -3,6 +3,7 @@ import asyncio
 import os
 import screeninfo as sc
 import re
+import numpy as np
 
 
 def load_data(path):
@@ -22,8 +23,12 @@ def edit_data(model):
     # Surface reconstruction
     print("reconstructing surface")
     poisson_mesh, densities = o3d.geometry.TriangleMesh.create_from_point_cloud_poisson(inlier_cloud, depth=9)
+    # get textures of model
+    print("extracting textures")
+    vertex_colors = inlier_cloud.colors
+    textures = np.reshape(vertex_colors, (-1, 3))
     
-    return poisson_mesh
+    return poisson_mesh, textures
 
 def ply_path_selection():
     while True:
@@ -82,18 +87,30 @@ async def show_model(poisson_mesh, window_name):
 async def save_data_gltf(poisson_mesh, save_path="gltf_3d_mesh/reconstructed_mesh.gltf"):
     # Save the reconstructed mesh as a glTF file
     print("Save file as Graphics Library Transmission Format (.glTF)")
-    # create empty directory to save file in if not existing
-    if os.path.exists("gltf_3d_mesh")==False:
-        os.makedirs("gltf_3d_mesh")
-    o3d.io.write_triangle_mesh("gltf_3d_mesh/reconstructed_mesh.gltf", poisson_mesh)
+    o3d.io.write_triangle_mesh(save_path, poisson_mesh)
     print(f"your glTF file has been saved to '/{save_path}'")
+
+async def save_textures(textures, save_path="gltf_3d_mesh/textures.png"):
+    # Save the textures as image texture map (.png)
+    print("Save textures as texture map (.png)")
+    texture_map = o3d.geometry.Image(textures.shape[0], textures.shape[1], o3d.geometry.ImageFormat.RGB)
+    print("1")
+    np.copyto(texture_map.data, textures)
+    print("2")
+    o3d.io.write_image(save_path, texture_map)
+    #im = Image.fromarray(textures, "RGB")
+    #im.save(save_path)
+    print(f"your texture map has been saved to '/{save_path}")
 
 async def main():
     model, window_name = ply_path_selection()
-    poisson_mesh = edit_data(model)
+    poisson_mesh, textures = edit_data(model)
+    # create empty directory to save files in if not existing
+    if os.path.exists("gltf_3d_mesh")==False:
+        os.makedirs("gltf_3d_mesh")
     # run show_model() and save_data_gltf() concurrently
     await asyncio.gather(show_model(poisson_mesh, window_name),
-                         save_data_gltf(poisson_mesh))
+                         save_data_gltf(poisson_mesh), save_textures(textures))
 
 
 if __name__ == '__main__':
