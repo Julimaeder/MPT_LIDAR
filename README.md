@@ -39,11 +39,13 @@ cd MPT_LIDAR
 pip install -r requirements.txt    
 ```
 
-## Final Data:
-https://drive.google.com/drive/folders/1M6tTGkDTPXaTPsOWzqo6xvJ2llFN9bHv?usp=sharing
 
 Then:   
 - run:   
 ```
 python lidar_script
 ```
+
+
+## Final Data:
+https://drive.google.com/drive/folders/1M6tTGkDTPXaTPsOWzqo6xvJ2llFN9bHv?usp=sharing
