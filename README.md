@@ -46,6 +46,8 @@ Then:
 python lidar_script
 ```
 
+## VR Meta Quest Tutorial
+https://www.youtube.com/watch?v=O1IrxSCyyKc
 
 ## Final Data:
 https://drive.google.com/drive/folders/1M6tTGkDTPXaTPsOWzqo6xvJ2llFN9bHv?usp=sharing
